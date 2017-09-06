@@ -1,9 +1,9 @@
-# def nameing_protagonist(protagonist_name):
-#     # protagonist_name = input("How shall I call you?: ")
-#     # print("Let it be, your's name is %s."% protagonist_name)
-#     pass
+def nameing_protagonist(protagonist_name):
+    protagonist_name = input("How shall I call you?: ")
+    print("Let it be, your's name is %s."% protagonist_name)
+     return protagonist_name
 
-# def pick_protagonist_class (protagonist_class):
+def pick_protagonist_class (protagonist_class):
 print("""You can choose a three classes:  Gnom, Unicorn and Fairy.
 [G]nom is big and strong. [U]nicorn healthy as a horse. [F]airy fast and courise""")
 
@@ -29,9 +29,9 @@ while True:
 
 print("Great! you picked{0}".format())
 
-# def main():
-#     protagonist_class = pick_protagonist_class(protagonist_class)
-#     protagonist_name = nameing_protagonist(protagonist_name)
-#
-#
-# main()
+def main():
+    protagonist_class = pick_protagonist_class(protagonist_class)
+    protagonist_name = nameing_protagonist(protagonist_name)
+
+
+main()
