@@ -1,0 +1,2 @@
+Weapon,Axe,Attack:10|Agility:-2
+Armor,Chain Armor,Defense:5|Agility:-3
