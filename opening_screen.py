@@ -8,6 +8,4 @@ def open_welcome_screen(file_name =  "welcome_screen.txt"):
             for char in line:
                 print(char, end="")
     print(end="")
-
-open_welcome_screen()
-os.system("sleep 2.5")
+    os.system("sleep 2.5")
