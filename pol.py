@@ -7,6 +7,25 @@ import inventory
 import opening_screen
 import how_to_play_screen
 
+# decrements item count associated with item_hilite_coords_list from invt
+def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
+    # item_hilite_coords_list might look like this:
+    # [ ['Weapon', [['Axe', 5, 3, 21], ... ]
+    #   ['Armor', [['armor1', 13, 3, 21], ...]
+    # ]
+    # the numbers in sub-lists are: y and x begin of hilite, and length
+    # invt = { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
+    for i in range(len(item_hilite_coords_list)):
+        if item_hilite_coords_list[i][0] == item_type:
+            if selected_index in range(len(item_hilite_coords_list[i][1])):
+                # access item name which will be our key to modifying invt
+                item = item_hilite_coords_list[i][1][selected_index][0]
+                invt[item_type][item] -= 1
+                if invt[item_type][item] == 0:
+                    del invt[item_type][item]
+                    if not invt[item_type]:
+                        del invt[item_type] # delete empty sub_inventory
+
 
 def main ():
     #opening_screen.open_welcome_screen()
@@ -56,6 +75,8 @@ def main ():
         # ]
         # the numbers in sub-lists are: y and x begin of hilite, and length
         invtable = inventory.generate_inventory_table(invt, item_hilite_coords_list)
+
+
         # select from item_hilite_coords_list the coordinates that are of interest to us
         hilite_coords = []
         for sublist in item_hilite_coords_list:
@@ -91,13 +112,21 @@ def main ():
         elif user_input == " ":
             #check antagonist proximity and apply damage if applicable
             mech.handle_player_attack(map, prot_pos, antags)
+
         elif user_input == "i":
             weapon_selection_index +=1
         elif user_input == "o":
             armor_selection_index +=1
         elif user_input == "p":
             potion_selection_index +=1
-        
+
+        elif user_input == "j":
+            use_item_handler(invt, "Weapon", item_hilite_coords_list, weapon_selection_index)
+        elif user_input == "k":
+            use_item_handler(invt, "Armor", item_hilite_coords_list, armor_selection_index)
+        elif user_input == "l":
+            use_item_handler(invt, "Potion", item_hilite_coords_list, potion_selection_index)
+
         elif user_input == "x":
             break
 

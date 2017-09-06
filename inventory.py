@@ -53,6 +53,7 @@ def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
     # enumerate weapons
     if "Weapon" not in inventory:
         invtable.append(line_none)
+        invt_ypos[0] += 1
     else:
         batch_item_append(inventory, "Weapon", invtable, item_indent, max_width, invt_ypos, item_hilite_coords_list)
 
@@ -63,6 +64,7 @@ def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
     # enumerate armor
     if "Armor" not in inventory:
         invtable.append(line_none)
+        invt_ypos[0] += 1
     else:
         batch_item_append(inventory, "Armor", invtable, item_indent, max_width, invt_ypos, item_hilite_coords_list)
 
@@ -73,6 +75,7 @@ def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
     # enumerate potions
     if "Potion" not in inventory:
         invtable.append(line_none)
+        invt_ypos[0] += 1
     else:
         batch_item_append(inventory, "Potion", invtable, item_indent, max_width, invt_ypos, item_hilite_coords_list)
 
