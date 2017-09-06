@@ -1,6 +1,6 @@
-import random
 import os
 import math
+
 
 def getch():
     import sys, tty, termios
@@ -15,7 +15,7 @@ def getch():
 
 
 '''
-Loads a map from a file.
+Loads a map from a file filename.
 '''
 def load_map (filename="map.txt"):
     map = []
@@ -59,7 +59,7 @@ def check_collision (map, char_coords, what):
     return False
 
 
-def handle_steer_keys(map, direction, protagonist, prot_pos, antagonist, old_char):
+def handle_protagonist_move(map, direction, protagonist, prot_pos, antagonist, old_char):
     dx = 0
     dy = 0
     if direction == "w":
@@ -90,15 +90,15 @@ def handle_steer_keys(map, direction, protagonist, prot_pos, antagonist, old_cha
         pass # do nothing, don't step at the antagonist
     else:  # perform the move
         # restore previous character to old position
-        map[prot_pos[1]][prot_pos[0]] = old_char
+        map[prot_pos[1]][prot_pos[0]] = old_char[0]
+        # save character to be stepped at for restoration
+        old_char[0] = map[prot_pos_new[1]][prot_pos_new[0]]
         # move/ `draw` protagonist in new pos
         map[prot_pos_new[1]][prot_pos_new[0]] = protagonist
         # update char_pos to the outside world
         prot_pos[0] = x_new
         prot_pos[1] = y_new
 
-    #print_map(map)
-    #os.system("read -p \"from handle steer keys\"")
     return True
 
 
@@ -124,56 +124,4 @@ def handle_player_attack(map, prot_pos, antags):
 
     # traverse antags list and delete dead ones
     while [] in antags:
-        for i in range(len(antags)):
-            if not antags[i]:
-                del antags[i]
-                break # avoid going out of bounds with index
-
-def main ():
-    map = load_map()
-    dist_from_wall = 2
-    map_xmin = dist_from_wall
-    map_ymin = dist_from_wall
-    map_xmax = len(map[0]) - dist_from_wall
-    map_ymax = len(map) - dist_from_wall
-    prot_pos = [ len(map[0]) - 4, 4 ] #[random.randint(map_xmin, map_xmax), random.randint(map_ymin, map_ymax)]
-    steer_keys = ("w", "s", "a", "d")
-
-    antagonist = "¤"
-    antag_hp = 10
-    # locate antagonists in our map for further handling
-    antags = []
-    for y in range(len(map)):
-        for x in range(len(map[y])):
-            if map[y][x] == antagonist:
-                antags.append([[x,y], 10])
-
-    old_char = map[prot_pos[1]][prot_pos[0]]
-    protagonist = "O"
-    map[prot_pos[1]][prot_pos[0]] = protagonist
-    while True:
-        # clear the terminal
-        os.system("clear")
-        # print map
-        print_map(map)
-        if len(antags) == 0:
-            print("Defeated antags.")
-            break
-
-        # take a character from input
-        user_input = getch()
-        # check input
-        if user_input.lower() in steer_keys:
-            still_in_play = handle_steer_keys(map, user_input, protagonist, prot_pos, antagonist, old_char)
-            if not still_in_play:
-                break
-
-        elif user_input == " ":
-            #check antagonist proximity and apply damage if applicable
-            handle_player_attack(map, prot_pos, antags)
-
-        elif user_input == "x":
-            break
-
-
-main()
+        del antags[antags.index([])] # the while condition guarantees that there is at least one []
