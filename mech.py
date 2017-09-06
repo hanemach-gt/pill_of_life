@@ -32,12 +32,43 @@ def load_map (filename="map.txt"):
 
     return map
 
+# hilite coords is a list consisting of lists like:
+# ['Axe', y, x, hilite length]
+def print_map (map, hilite_coords):
+    coord_dict = {}
+    for i in range(len(hilite_coords)):
+        # sieve out y: [x, length of hilite]
+        coord_dict[hilite_coords[i][1]] = [hilite_coords[i][2], hilite_coords[i][3]]
 
-def print_map (map):
-    for row in map:
-        for char in row:
-            print(char, end="")
+    for y in range(len(map)):
+        for x in range(len(map[y])):
+            #                      x_start          <= x < x_start          + length of hilite
+            if y in coord_dict and coord_dict[y][0] <= x < coord_dict[y][0] + coord_dict[y][1]:
+                # print with inverted color
+                print("\033[7m" + map[y][x] + "\033[0m", end="")
+            else:
+                # print normally
+                print(map[y][x], end="")
         print()
+
+
+def bind_maps(left, right):
+    left_indent = [" "] * len(left[0])
+    bound = []
+    if len(right) > len(left):
+        for i in range(len(right)):
+            if i < len(left):
+                bound.append(left[i] + right[i])
+            else:
+                bound.append(left_indent + right[i])
+    else:
+        for i in range(len(left)):
+            if i < len(right):
+                bound.append(left[i] + right[i])
+            else:
+                bound.append(left[i])
+
+    return bound
 
 
 '''
