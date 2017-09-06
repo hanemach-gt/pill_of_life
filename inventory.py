@@ -26,14 +26,13 @@ def batch_item_append (inventory, masterkey, invtable, item_indent, max_width, i
 def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
 
     invtable = []
-
     item_hilite_coords_list.clear()
 
     str_inventory = " Available items: "
     str_weapons = "  Weapons:"
     str_armor = "  Armor:"
     str_potions = "  Potions:"
-    str_none = "[none]"
+    str_none = "[empty]"
 
     item_indent = [" "] * 3
 
