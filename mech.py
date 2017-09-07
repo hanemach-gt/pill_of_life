@@ -1,6 +1,7 @@
 import os
 import math
 
+import msg
 
 def getch():
     import sys, tty, termios
@@ -82,8 +83,8 @@ def print_map (map, hilite_coords):
                 print(color + map[y][x] + "\033[0m", end="")
         print()
 
-
-def bind_maps(left, right):
+# returns a bound map of 2 maps in horizontal orientation
+def bind_maps_horz(left, right):
     left_indent = [" "] * len(left[0])
     bound = []
     if len(right) > len(left):
@@ -98,6 +99,18 @@ def bind_maps(left, right):
                 bound.append(left[i] + right[i])
             else:
                 bound.append(left[i])
+
+    return bound
+
+
+# returns a bound map of 2 maps in vertical orientation
+def bind_maps_vert(up, down):
+    bound = []
+    for row in up:
+        bound.append(row)
+    
+    for row in down:
+        bound.append(row)
 
     return bound
 
@@ -198,7 +211,7 @@ def adjust_inventory_prot_traits(invt, prot_traits, item):
         prot_traits["Load capacity"] -= 1
 
 
-def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
+def handle_protagonist_move(map, direction, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
     dx = 0
     dy = 0
     if direction == "w":
@@ -246,9 +259,7 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, 
     elif would_step_at_any_antag:
         pass # do nothing, antagonists cannot be stepped at
     elif would_step_at_item and not able_to_lift_item(prot_pos_new, prot_traits, items_coords, items_collection):
-
-        pass
-        # todo: print message about not being able to collect an item
+        msg.set_output_message(message_output, "You don\'t have enough load capacity to lift this item.\n\nYou need to drop something to increase load capacity.")
     else:  # perform the move
         # restore previous character to old position
         map[prot_pos[1]][prot_pos[0]] = old_char[0]

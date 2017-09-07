@@ -4,6 +4,7 @@ import random
 import mech
 import items
 import inventory
+import msg
 
 import opening_screen
 import how_to_play_screen
@@ -68,6 +69,8 @@ def main ():
                     "Attack":5, "Defense":5, "Agility":5, "Strength":10,
                     "Load capacity":1 }
 
+    message_output = []
+
     weapon_selection_index = 0
     armor_selection_index = 0
     potion_selection_index = 0
@@ -83,7 +86,6 @@ def main ():
         # ]
         # the numbers in sub-lists are: y and x begin of hilite, and length
         invtable = inventory.generate_inventory_table(invt, item_hilite_coords_list, prot_traits)
-
 
         # select from item_hilite_coords_list the coordinates that are of interest to us
         hilite_coords = []
@@ -104,7 +106,7 @@ def main ():
                 hilite_coords.append(sublist[1][potion_selection_index])
 
         # print a bind of maps, highlighting appropriate entries in inventory table
-        mech.print_map(mech.bind_maps(invtable, map), hilite_coords)
+        mech.print_map(mech.bind_maps_horz(invtable, mech.bind_maps_vert(map, message_output)), hilite_coords)
         if len(antags_coords) == 0:
             print("Defeated antags.")
             break
@@ -113,7 +115,7 @@ def main ():
         user_input = mech.getch()
         # check input
         if user_input.lower() in steer_keys:
-            still_in_play = mech.handle_protagonist_move(map, user_input, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt)
+            still_in_play = mech.handle_protagonist_move(map, user_input, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt)
             if not still_in_play:
                 break
 
