@@ -160,7 +160,7 @@ def able_to_lift_item(prot_pos, prot_traits, items_coords, items_collection):
     if item[0] == "Potion":
         return True
     elif item[0] == "Weapon" or item[0] == "Armor":
-        if prot_traits["load_capacity"] < 1: #cannot take it?
+        if prot_traits["Load capacity"] < 1: #cannot take it?
             return False
         return True
 
@@ -194,8 +194,8 @@ def adjust_inventory_prot_traits(invt, prot_traits, item):
         # add the item
         invt[item_type][item_name] = 1
 
-    if not item_name == "Potion": # potions are weightless and are always collectible
-        prot_traits["load_capacity"] -= 1
+    if not item_type == "Potion": # potions are weightless and are always collectible
+        prot_traits["Load capacity"] -= 1
 
 
 def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
@@ -228,7 +228,7 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, 
 
     # any item?
     would_step_at_item = check_collision(map, prot_pos_new, "i")
-    
+
     # any deadly wall?
     cannot_step_at = "<#~|"
     would_step_at_any_deadly = False
@@ -246,7 +246,7 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, 
     elif would_step_at_any_antag:
         pass # do nothing, antagonists cannot be stepped at
     elif would_step_at_item and not able_to_lift_item(prot_pos_new, prot_traits, items_coords, items_collection):
-        ValueError("dupa")
+
         pass
         # todo: print message about not being able to collect an item
     else:  # perform the move

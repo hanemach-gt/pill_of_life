@@ -64,9 +64,9 @@ def main ():
             }
     invtable = [] # inventory nicely converted to ascii will sit here, it is loaded a little later
 
-    prot_traits = { "lives":10, "experience":7,
-                    "attack":5, "defense":5, "agility":5, "strength":10,
-                    "load_capacity":1 }
+    prot_traits = { "Lives":10, "Experience":7,
+                    "Attack":5, "Defense":5, "Agility":5, "Strength":10,
+                    "Load capacity":1 }
 
     weapon_selection_index = 0
     armor_selection_index = 0
@@ -82,7 +82,7 @@ def main ():
         #   ['Armor', [['armor1', 13, 3, 21], ...]
         # ]
         # the numbers in sub-lists are: y and x begin of hilite, and length
-        invtable = inventory.generate_inventory_table(invt, item_hilite_coords_list)
+        invtable = inventory.generate_inventory_table(invt, item_hilite_coords_list, prot_traits)
 
 
         # select from item_hilite_coords_list the coordinates that are of interest to us
