@@ -111,14 +111,15 @@ def check_collision (map, char_coords, what):
     x_test = char_coords[0]
     y_test = char_coords[1]
     # bounds checking
-    if not 0 <= x_test < len(map[0]) or \
-        not 0 <= y_test < len(map):
+    if 0 <= y_test < len(map) and \
+        0 <= x_test < len(map[y_test]):
+        # check if there would be `what` at char_coords
+            if map[y_test][x_test] == what:
+                return True
+            else:
+                return False
+    else:
         raise ValueError("at least one board list index out of bounds")
-
-    if map[y_test][x_test] == what:
-        return True
-
-    return False
 
 
 # returns an item tuple from items_collection; it *has* to exist since protagonist
@@ -193,6 +194,9 @@ def adjust_inventory_prot_traits(invt, prot_traits, item):
         # add the item
         invt[item_type][item_name] = 1
 
+    if not item_name == "Potion": # potions are weightless and are always collectible
+        prot_traits["load_capacity"] -= 1
+
 
 def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
     dx = 0
@@ -224,9 +228,9 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, 
 
     # any item?
     would_step_at_item = check_collision(map, prot_pos_new, "i")
-
+    
     # any deadly wall?
-    cannot_step_at = "#~|"
+    cannot_step_at = "<#~|"
     would_step_at_any_deadly = False
     for disallowed in cannot_step_at:
         if check_collision(map, prot_pos_new, disallowed):
@@ -242,6 +246,7 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, prot_traits, 
     elif would_step_at_any_antag:
         pass # do nothing, antagonists cannot be stepped at
     elif would_step_at_item and not able_to_lift_item(prot_pos_new, prot_traits, items_coords, items_collection):
+        ValueError("dupa")
         pass
         # todo: print message about not being able to collect an item
     else:  # perform the move

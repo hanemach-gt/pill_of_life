@@ -32,7 +32,7 @@ def main ():
     #opening_screen.open_welcome_screen()
     #how_to_play_screen.how_to_play_screen()
 
-    map = mech.load_map()
+    map = mech.load_map("map_level_1.txt")
     prot_pos = [ len(map[0]) - 4, 4 ] #[random.randint(map_xmin, map_xmax), random.randint(map_ymin, map_ymax)]
     steer_keys = ("w", "s", "a", "d")
 
@@ -66,7 +66,7 @@ def main ():
 
     prot_traits = { "lives":10, "experience":7,
                     "attack":5, "defense":5, "agility":5, "strength":10,
-                    "load_capacity":8888 }
+                    "load_capacity":1 }
 
     weapon_selection_index = 0
     armor_selection_index = 0
