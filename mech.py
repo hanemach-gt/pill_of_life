@@ -32,6 +32,29 @@ def load_map (filename="map.txt"):
 
     return map
 
+def get_predefined_color(color):
+    colors = {
+        "black"     :"\033[30m",
+        "red"       :"\033[31m",
+        "green"     :"\033[32m",
+        "orange"    :"\033[33m",
+        "blue"      :"\033[34m",
+        "purple"    :"\033[35m",
+        "cyan"      :"\033[36m",
+        "lightgrey" :"\033[37m",
+        "darkgrey"  :"\033[90m",
+        "lightred"  :"\033[91m",
+        "lightgreen":"\033[92m",
+        "yellow"    :"\033[93m",
+        "lightblue" :"\033[94m",
+        "pink":     "\033[95m",
+        "lightcyan" :"\033[96m"
+        }
+    if color not in colors:
+        raise KeyError("invalid color specifier")
+
+    return colors[color]
+
 # hilite coords is a list consisting of lists like:
 # ['Axe', y, x, hilite length]
 def print_map (map, hilite_coords):
@@ -44,11 +67,19 @@ def print_map (map, hilite_coords):
         for x in range(len(map[y])):
             #                      x_start          <= x < x_start          + length of hilite
             if y in coord_dict and coord_dict[y][0] <= x < coord_dict[y][0] + coord_dict[y][1]:
-                # print with inverted color
+                # print with inverted color: inventory selected item
                 print("\033[7m" + map[y][x] + "\033[0m", end="")
             else:
-                # print normally
-                print(map[y][x], end="")
+                # print normally, optionally in colors
+                color = "\033[0m" # default
+                if map[y][x] == "<":
+                    color = get_predefined_color("lightgreen")
+                elif map[y][x] == "#":
+                    color = get_predefined_color("red")
+                elif map[y][x] == "~":
+                    color = get_predefined_color("orange")
+
+                print(color + map[y][x] + "\033[0m", end="")
         print()
 
 
