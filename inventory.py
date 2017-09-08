@@ -35,9 +35,9 @@ def generate_inventory_table(inventory, item_hilite_coords_list, prot_traits, ma
     item_hilite_coords_list.clear()
 
     str_inventory = " Available items: "
-    str_weapons = "  Weapons:"
-    str_armor = "  Armor:"
-    str_potions = "  Potions:"
+    str_weapons = "[I] Weapons:  [J]-remove"
+    str_armor = "[O] Armor:  [K]-remove"
+    str_potions = "[P] Potions:  [L]-use"
     str_none = "[empty]"
 
     item_indent = [" "] * 3
