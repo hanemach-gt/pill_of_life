@@ -5,6 +5,7 @@ import mech
 import items
 import inventory
 import msg
+import character_picking
 
 import opening_screen
 import how_to_play_screen
@@ -32,6 +33,8 @@ def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
 def main ():
     #opening_screen.open_welcome_screen()
     #how_to_play_screen.how_to_play_screen()
+
+    prot_name, prot_class = character_picking.pick_character()
 
     map = mech.load_map("map_level_1.txt")
     prot_pos = [ len(map[0]) - 4, 4 ] #[random.randint(map_xmin, map_xmax), random.randint(map_ymin, map_ymax)]
