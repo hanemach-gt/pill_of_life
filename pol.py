@@ -205,8 +205,8 @@ def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_co
 
 
 def main ():
-    #opening_screen.open_welcome_screen()
-    #how_to_play_screen.how_to_play_screen()
+    opening_screen.open_welcome_screen()
+    how_to_play_screen.how_to_play_screen()
 
     prot_name, prot_class = character_picking.pick_character()
 

@@ -11,6 +11,7 @@ def nameing_protagonist ():
 
 
 def pick_protagonist_class ():
+    print()
     print("""You can choose one of three heroes:  Gnome, Unicorn and Fairy.
     [G]nome is big and strong. [U]nicorn is healthy as a horse. [F]airy is fast and courise""")
 
