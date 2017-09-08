@@ -136,6 +136,10 @@ def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_co
 
         # print a horizontal bind of (inventory table) and (vertical bind of map and message output), highlighting appropriate entries in inventory table
         mech.print_map(mech.bind_maps_horz(invtable, mech.bind_maps_vert(map, message_output)), hilite_coords)
+
+        if prot_traits["Lives"] <= 0:
+            return False
+
         if len(antags_coords) == 0:
             return True
 
@@ -220,7 +224,7 @@ def main ():
         print("Player interrupted the game.")
     else:
         if result == True:
-            prot_initial_coords = [ 2, 52 ]
+            prot_initial_coords = [ 52, 2 ]
             result = engage_level(invt, prot_traits, items_collection, "map_level_2.txt", prot_initial_coords)
             if result is None:
                 print("Player interrupted the game.")
