@@ -215,8 +215,11 @@ def main ():
 
     prot_traits = { "Lives":10, "Experience":7,
                     "Attack":5, "Defense":5, "Agility":5, "Strength":10,
-                    "Load capacity":777 }
-
+                    "Load capacity":10 }
+    print(prot_class, prot_traits)
+    prot_traits["Lives"] = prot_class["Lives"]
+    prot_traits["Strength"] = prot_class["Strength"]
+    prot_traits["Agility"] = prot_class["Agility"]
 
     prot_initial_coords = [ 105, 30 ]
     result = engage_level(invt, prot_traits, items_collection, "map_level_1.txt", prot_initial_coords)

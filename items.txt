@@ -13,4 +13,14 @@ Armor,flannel shirt,Defense:6|Agility:0
 Potion,expecto patronum,Lives:10
 Potion,kamehameha,Attack:7
 Potion,exegi monumentum,Defense:3
-Potion,memento mori,Lives:5
+Potion,memento mori,Lives:10
+Weapon,club,Attack:3|Agility:0
+Armor,plate armor,Defense:15|Agility:-12
+Armor,cape,Defense:5|Agility:0
+Weapon,broomstick,Attack:3|Agility:0
+Potion,medium memento mori,Lives:15
+Potion,big memento mori,Lives:30
+Armor,armadilo armor,Defense:30|Agility:-2
+Armor,sandals&sock,Defense:8|Agility:5
+Weapon,crowbar,Attack:9|Agility:-7
+Weapon,whip,Attack:2|Agility:6
