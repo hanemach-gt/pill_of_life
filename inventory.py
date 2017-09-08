@@ -85,7 +85,6 @@ def generate_inventory_table(inventory, item_hilite_coords_list, prot_traits, ma
         batch_item_append(inventory, "Potion", invtable, item_indent, max_width, invt_ypos, item_hilite_coords_list)
 
     invtable.append(empty_line)
-    invtable.append(empty_line)
     invt_ypos[0] += 2
 
     str_stats = " Hero statistics:"

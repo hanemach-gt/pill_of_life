@@ -58,7 +58,7 @@ def get_predefined_color(color):
 
 # hilite coords is a list consisting of lists like:
 # ['Axe', y, x, hilite length]
-def print_map (map, hilite_coords):
+def print_map_old(map, hilite_coords): # the unoptimized version, this function is deprecated but was left for educational purposes
     coord_dict = {}
     for i in range(len(hilite_coords)):
         # sieve out y: [x, length of hilite]
@@ -82,6 +82,50 @@ def print_map (map, hilite_coords):
 
                 print(color + map[y][x] + "\033[0m", end="")
         print()
+
+
+# hilite coords is a list consisting of lists like:
+# ['Axe', y, x, hilite length]
+def print_map(map, hilite_coords):
+    coord_dict = {}
+    for i in range(len(hilite_coords)):
+        # sieve out y: [x, length of hilite]
+        coord_dict[hilite_coords[i][1]] = [hilite_coords[i][2], hilite_coords[i][3]]
+
+    y = 0
+    x = 0
+    while y < len(map):
+        x = 0
+        while x < len(map[y]):
+            #                      x_start          <= x < x_start          + length of hilite
+            if y in coord_dict and coord_dict[y][0] <= x < coord_dict[y][0] + coord_dict[y][1]:
+                # print with inverted color: inventory selected item
+                hilite_me = ""
+                for i in range(coord_dict[y][1]): # length of hilite
+                    hilite_me += map[y][x]
+                    x += 1
+                print("\033[7m" + hilite_me + "\033[0m", end="")
+            else:
+                # print normally, optionally in colors
+                color = "\033[0m" # default
+                # recognize patterns:
+                pattern = ""
+                patt_char = map[y][x]
+                while x < len(map[y]) and map[y][x] == patt_char:
+                    pattern += patt_char
+                    x += 1
+
+                if patt_char == "<":
+                    color = get_predefined_color("lightgreen")
+                elif patt_char == "#":
+                    color = get_predefined_color("red")
+                elif patt_char == "~":
+                    color = get_predefined_color("orange")
+
+                print(color + pattern if len(pattern) > 0 else patt_char + "\033[0m", end="")
+        print()
+        y += 1
+
 
 # returns a bound map of 2 maps in horizontal orientation
 def bind_maps_horz(left, right):
@@ -108,7 +152,7 @@ def bind_maps_vert(up, down):
     bound = []
     for row in up:
         bound.append(row)
-    
+
     for row in down:
         bound.append(row)
 
@@ -180,7 +224,7 @@ def able_to_lift_item(prot_pos, prot_traits, items_coords, items_collection):
     raise ValueError("unknown item type %s" % (item[0]))
 
 
-def adjust_inventory_prot_traits(invt, prot_traits, item):
+def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
 # invt is a { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
 # prot_traits is a dict with string:int pairs
 # item is a (type1, item1, {trait1 : delta1, ... traitn : deltan})
@@ -210,6 +254,16 @@ def adjust_inventory_prot_traits(invt, prot_traits, item):
     if not item_type == "Potion": # potions are weightless and are always collectible
         prot_traits["Load capacity"] -= 1
 
+    traits_string = ""
+    for trait in trait_dict:
+        plus = ""
+        if prot_traits[trait] > 0:
+            plus = "+"
+        traits_string += trait + " " + plus + str(prot_traits[trait]) + ",  "
+    traits_string = traits_string.rstrip(",  ")
+
+    result_msg = "Grabbed %s (%s), modified %s" % (item_name, item_type, traits_string)
+    msg.set_output_message(message_output, result_msg)
 
 def handle_protagonist_move(map, direction, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
     dx = 0
@@ -276,7 +330,7 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
             # items_coords = [ [[item1_x, item1_y], index1], ... ]
             item = get_item_from_collection(prot_pos, items_coords, items_collection)
             # apply item to inventory and protagonist traits
-            adjust_inventory_prot_traits(invt, prot_traits, item)
+            adjust_inventory_prot_traits(invt, prot_traits, item, message_output)
             old_char[0] = " " # will wipe item after we have moved somewhere else
 
     return True

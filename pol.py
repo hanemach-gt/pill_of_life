@@ -59,15 +59,15 @@ def main ():
     map[prot_pos[1]][prot_pos[0]] = protagonist
 
     # load primary inventory
-    invt = { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9},
-                "Potion": {"pot1":3, "pot2":4, "pot3":4, "pot4":4, "pot5":4},
-                "Armor": {"armor1":5, "armor2":9, "armor3":5, "armor4":9, "armor5":9 }
+    invt = { "Weapon": {"Axe":1, "Knife":7 },
+                "Potion": {"pot1":3 },
+                "Armor": {"armor1":5 }
             }
     invtable = [] # inventory nicely converted to ascii will sit here, it is loaded a little later
 
     prot_traits = { "Lives":10, "Experience":7,
                     "Attack":5, "Defense":5, "Agility":5, "Strength":10,
-                    "Load capacity":1 }
+                    "Load capacity":777 }
 
     message_output = []
 
@@ -105,7 +105,7 @@ def main ():
                     potion_selection_index = 0
                 hilite_coords.append(sublist[1][potion_selection_index])
 
-        # print a bind of maps, highlighting appropriate entries in inventory table
+        # print a horizontal bind of (inventory table) and (vertical bind of map and message output), highlighting appropriate entries in inventory table
         mech.print_map(mech.bind_maps_horz(invtable, mech.bind_maps_vert(map, message_output)), hilite_coords)
         if len(antags_coords) == 0:
             print("Defeated antags.")
