@@ -1,13 +1,13 @@
-Weapon,Axe,Attack:10|Agility:-4
-Weapon,sword,Attack:5|Agility:-2
+Weapon,Axe,Attack:10|Agility:0
+Weapon,sword,Attack:5|Agility:0
 Weapon,dagger,Attack:2|Agility:0
-Weapon,staff,Attack:3|Agility:-1
-Weapon,spear,Attack:7|Agility:-3
-Weapon,shovel,Attack:12|Agility:-5
-Armor,heavy armor,Defense:10|Agility:-10
-Armor,leather armor,Defense:5|Agility:-6
-Armor,wifebeater,Defense:15|Agility:-1
-Armor,Chain Armor,Defense:8|Agility:-5
+Weapon,staff,Attack:3|Agility:0
+Weapon,spear,Attack:7|Agility:0
+Weapon,shovel,Attack:12|Agility:0
+Armor,heavy armor,Defense:10|Agility:0
+Armor,leather armor,Defense:5|Agility:0
+Armor,wifebeater,Defense:15|Agility:0
+Armor,Chain Armor,Defense:8|Agility:0
 Armor,sheet,Defense:1|Agility:0
 Armor,flannel shirt,Defense:6|Agility:0
 Potion,expecto patronum,Lives:10
@@ -15,12 +15,12 @@ Potion,kamehameha,Attack:7
 Potion,exegi monumentum,Defense:3
 Potion,memento mori,Lives:10
 Weapon,club,Attack:3|Agility:0
-Armor,plate armor,Defense:15|Agility:-12
+Armor,plate armor,Defense:15|Agility:0
 Armor,cape,Defense:5|Agility:0
 Weapon,broomstick,Attack:3|Agility:0
 Potion,med memento mori,Lives:15
 Potion,big memento mori,Lives:30
-Armor,armadilo armor,Defense:30|Agility:-2
+Armor,armadilo armor,Defense:30|Agility:0
 Armor,sandals&sock,Defense:8|Agility:5
-Weapon,crowbar,Attack:9|Agility:-7
+Weapon,crowbar,Attack:9|Agility:0
 Weapon,whip,Attack:2|Agility:6

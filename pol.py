@@ -1,5 +1,6 @@
 import os
 import random
+import datetime
 
 import mech
 import items
@@ -199,6 +200,9 @@ def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_co
             use_item_handler(invt, "Armor", item_hilite_coords_list, armor_selection_index, prot_traits)
         elif user_input == "l":
             use_item_handler(invt, "Potion", item_hilite_coords_list, potion_selection_index, prot_traits)
+
+        elif user_input == "g": # secret backdoor to skipping levels for brief presentation
+            return True
 
         elif user_input == "x":
             return None
