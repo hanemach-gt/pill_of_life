@@ -1,2 +1,2 @@
-player name,expierience,number defeated enemy,points,win_time
-Pepik,123,50,173,0
+|              player_name               |              expierience               |             defeated_enemy             |              victory_time              |
+|                   de                   |                   1                    |             5hhhhhhhhhhhh0             |            hhhhhhhhhhhhhh0             |

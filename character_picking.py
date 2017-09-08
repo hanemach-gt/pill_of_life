@@ -43,9 +43,6 @@ def pick_protagonist_class ():
 
 
 
-def main():
+
     protagonist_class = pick_protagonist_class()
     protagonist_name = nameing_protagonist()
-
-
-main()
