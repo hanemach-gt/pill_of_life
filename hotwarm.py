@@ -23,7 +23,7 @@ def play(attempts):
     while not is_guessed:
         count += 1
         if count >= attempts:
-            print("You've exhausted your allowed attempts! You lost!")
+            print("You've exhausted your allowed attempts! You lost!The number was:",randomized)
             return False
 
         print("Guess #" + str(count))

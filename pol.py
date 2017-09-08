@@ -219,7 +219,7 @@ def main ():
                 "Armor": {"armor1":5 }
             }
 
-    prot_traits = { "Lives":10, "Experience":7,
+    prot_traits = { "Lives":30, "Experience":7,
                     "Attack":5, "Defense":5, "Agility":5, "Strength":10,
                     "Load capacity":10 }
 
