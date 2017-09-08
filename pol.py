@@ -10,6 +10,21 @@ import character_picking
 import opening_screen
 import how_to_play_screen
 
+
+def extract_item_name(item_hilite_coords_list, item_type, index):
+    # item_hilite_coords_list might look like this:
+    # [ ['Weapon', [['Axe', 5, 3, 21], ...] ]
+    #   ['Armor', [['armor1', 13, 3, 21], ...] ]
+    # ]
+    item_name = ""
+    for i in range(len(item_hilite_coords_list)):
+        if item_hilite_coords_list[i][0] == item_type:
+            if index in range(len(item_hilite_coords_list[i][1])):
+                item_name = item_hilite_coords_list[i][1][index][0]
+
+    return item_name
+
+
 # decrements item count associated with item_hilite_coords_list from invt
 def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
     # item_hilite_coords_list might look like this:
@@ -18,16 +33,41 @@ def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
     # ]
     # the numbers in sub-lists are: y and x begin of hilite, and length
     # invt = { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
-    for i in range(len(item_hilite_coords_list)):
-        if item_hilite_coords_list[i][0] == item_type:
-            if selected_index in range(len(item_hilite_coords_list[i][1])):
-                # access item name which will be our key to modifying invt
-                item = item_hilite_coords_list[i][1][selected_index][0]
-                invt[item_type][item] -= 1
-                if invt[item_type][item] == 0:
-                    del invt[item_type][item]
-                    if not invt[item_type]:
-                        del invt[item_type] # delete empty sub_inventory
+    # access item name which will be our key to modifying invt
+    item = extract_item_name(item_hilite_coords_list, item_type, selected_index)
+    if item:
+        invt[item_type][item] -= 1
+        if invt[item_type][item] == 0:
+            del invt[item_type][item]
+            if not invt[item_type]:
+                del invt[item_type] # delete empty sub_inventory
+
+# prints out selected item traits to player message output
+def item_selection_msg_handler(item_hilite_coords_list, item_type, index, items_collection, message_output):
+    # item_hilite_coords_list might look like this:
+    # [ ['Weapon', [['Axe', 5, 3, 21], ...] ]
+    #   ['Armor', [['armor1', 13, 3, 21], ...] ]
+    # ]
+    # items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
+    #                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
+    item_name = extract_item_name(item_hilite_coords_list, item_type, index)
+    trait_dict = {}
+    if item_name:
+        for item in items_collection:
+            if item[0] == item_type and item[1] == item_name:
+                trait_dict = item[2]
+                break
+
+    traits_string = ""
+    for trait in trait_dict:
+        plus = ""
+        if trait_dict[trait] > 0:
+            plus = "+"
+        traits_string += trait + " " + plus + str(trait_dict[trait]) + ",  "
+    traits_string = traits_string.rstrip(",  ")
+
+    result_msg = "Selected %s (%s), modifies %s, weighs %s" % (item_name, item_type, traits_string, "1" if not item_type=="Potion" else "nothing")
+    msg.set_output_message(message_output, result_msg)
 
 
 def main ():
@@ -99,12 +139,12 @@ def main ():
                 hilite_coords.append(sublist[1][weapon_selection_index])
 
             if "Armor" in sublist:
-                if armor_selection_index not in range(len(sublist[1])):
+                if armor_selection_index not in range(len(sublist[1])): # check if we haven't retained an index of exhausted item
                     armor_selection_index = 0
                 hilite_coords.append(sublist[1][armor_selection_index])
 
             if "Potion" in sublist:
-                if potion_selection_index not in range(len(sublist[1])):
+                if potion_selection_index not in range(len(sublist[1])): # check if we haven't retained an index of exhausted item
                     potion_selection_index = 0
                 hilite_coords.append(sublist[1][potion_selection_index])
 
@@ -124,14 +164,39 @@ def main ():
 
         elif user_input == " ":
             #check antagonist proximity and apply damage if applicable
-            mech.handle_player_attack(map, prot_pos, antags_coords)
+            # access currently selected Weapon
+            weapon_name = extract_item_name(item_hilite_coords_list, "Weapon", weapon_selection_index)
+            # item_hilite_coords_list might look like this:
+            # [ ['Weapon', [['Axe', 5, 3, 21], ...] ]
+            #   ['Armor', [['armor1', 13, 3, 21], ...] ]
+            # ]
+            # the numbers in sub-lists are: y and x begin of hilite, and length
+            # invt = { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
+            mech.handle_player_attack(map, prot_pos, antags_coords, prot_traits, message_output, invt, weapon_name)
 
         elif user_input == "i":
             weapon_selection_index += 1
+            for sublist in item_hilite_coords_list:
+                if "Weapon" in sublist:
+                    if weapon_selection_index not in range(len(sublist[1])): # check if we haven't retained an index of exhausted item
+                        weapon_selection_index = 0
+            item_selection_msg_handler(item_hilite_coords_list, "Weapon", weapon_selection_index, items_collection, message_output)
+
         elif user_input == "o":
             armor_selection_index += 1
+            for sublist in item_hilite_coords_list:
+                if "Armor" in sublist:
+                    if armor_selection_index not in range(len(sublist[1])):
+                        armor_selection_index = 0
+            item_selection_msg_handler(item_hilite_coords_list, "Armor", armor_selection_index, items_collection, message_output)
+
         elif user_input == "p":
             potion_selection_index += 1
+            for sublist in item_hilite_coords_list:
+                if "Potion" in sublist:
+                    if potion_selection_index not in range(len(sublist[1])):
+                        potion_selection_index = 0
+            item_selection_msg_handler(item_hilite_coords_list, "Potion", potion_selection_index, items_collection, message_output)
 
         elif user_input == "j":
             use_item_handler(invt, "Weapon", item_hilite_coords_list, weapon_selection_index)
