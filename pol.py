@@ -6,6 +6,7 @@ import items
 import inventory
 import msg
 import character_picking
+import hotwarm
 
 import opening_screen
 import how_to_play_screen
@@ -70,21 +71,15 @@ def item_selection_msg_handler(item_hilite_coords_list, item_type, index, items_
     msg.set_output_message(message_output, result_msg)
 
 
-def main ():
-    #opening_screen.open_welcome_screen()
-    #how_to_play_screen.how_to_play_screen()
-
-    prot_name, prot_class = character_picking.pick_character()
-
-    map = mech.load_map("map_level_1.txt")
-    prot_pos = [ len(map[0]) - 4, 4 ] #[random.randint(map_xmin, map_xmax), random.randint(map_ymin, map_ymax)]
+# returns True if level passed, False if lost, None
+def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_coords):
+    map = mech.load_map(file_name)
+    prot_pos = [ prot_initial_coords[0], prot_initial_coords[1] ] #[random.randint(map_xmin, map_xmax), random.randint(map_ymin, map_ymax)]
     steer_keys = ("w", "s", "a", "d")
 
     antagonists = ["¤", "O"]
     antag_hp = 10
 
-    # load items that will be collectible from map
-    items_collection = items.load_items()
     # locate antagonists and items (predefined symbols) in our map for further handling
     antags_coords = []
     items_coords = []
@@ -101,16 +96,7 @@ def main ():
     old_char = [map[prot_pos[1]][prot_pos[0]]]
     map[prot_pos[1]][prot_pos[0]] = protagonist
 
-    # load primary inventory
-    invt = { "Weapon": {"Axe":1, "Knife":7 },
-                "Potion": {"pot1":3 },
-                "Armor": {"armor1":5 }
-            }
     invtable = [] # inventory nicely converted to ascii will sit here, it is loaded a little later
-
-    prot_traits = { "Lives":10, "Experience":7,
-                    "Attack":5, "Defense":5, "Agility":5, "Strength":10,
-                    "Load capacity":777 }
 
     message_output = []
 
@@ -151,8 +137,7 @@ def main ():
         # print a horizontal bind of (inventory table) and (vertical bind of map and message output), highlighting appropriate entries in inventory table
         mech.print_map(mech.bind_maps_horz(invtable, mech.bind_maps_vert(map, message_output)), hilite_coords)
         if len(antags_coords) == 0:
-            print("Defeated antags.")
-            break
+            return True
 
         # take a character from input
         user_input = mech.getch()
@@ -160,7 +145,7 @@ def main ():
         if user_input.lower() in steer_keys:
             still_in_play = mech.handle_protagonist_move(map, user_input, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt)
             if not still_in_play:
-                break
+                return False
 
         elif user_input == " ":
             #check antagonist proximity and apply damage if applicable
@@ -206,9 +191,50 @@ def main ():
             use_item_handler(invt, "Potion", item_hilite_coords_list, potion_selection_index)
 
         elif user_input == "x":
-            break
+            return None
 
 
+def main ():
+    #opening_screen.open_welcome_screen()
+    #how_to_play_screen.how_to_play_screen()
+
+    prot_name, prot_class = character_picking.pick_character()
+
+    # load items that will be collectible from map
+    items_collection = items.load_items()
+
+    # load primary inventory
+    invt = { "Weapon": {"Axe":1, "Knife":7 },
+                "Potion": {"pot1":3 },
+                "Armor": {"armor1":5 }
+            }
+
+    prot_traits = { "Lives":10, "Experience":7,
+                    "Attack":5, "Defense":5, "Agility":5, "Strength":10,
+                    "Load capacity":777 }
+
+
+    prot_initial_coords = [ 105, 30 ]
+    result = engage_level(invt, prot_traits, items_collection, "map_level_1.txt", prot_initial_coords)
+    if result is None:
+        print("Player interrupted the game.")
+    else:
+        if result == True:
+            prot_initial_coords = [ 2, 52 ]
+            result = engage_level(invt, prot_traits, items_collection, "map_level_2.txt", prot_initial_coords)
+            if result is None:
+                print("Player interrupted the game.")
+            else:
+                if result == True:
+                    # engage cold warm hot
+                    if hotwarm.play(10):
+                        print("Congratulations! You have won!")
+                    else:
+                        print("We're sad that you've lost at the very end!")
+                else:
+                    print("You lost!")
+        else:
+            print("You lost!")
 
 if __name__ == "__main__":
     main()
