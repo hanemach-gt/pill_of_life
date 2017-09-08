@@ -1,6 +1,7 @@
 import os
 import math
 
+import fighting
 import msg
 
 def getch():
@@ -265,6 +266,7 @@ def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
     result_msg = "Grabbed %s (%s), modified %s" % (item_name, item_type, traits_string)
     msg.set_output_message(message_output, result_msg)
 
+
 def handle_protagonist_move(map, direction, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
     dx = 0
     dy = 0
@@ -341,13 +343,14 @@ def distance(pos1, pos2):
     dy = pos2[1] - pos1[1]
     return int(math.floor(math.sqrt(dx*dx+dy*dy)))
 
-def handle_player_attack(map, prot_pos, antags_coords):
+def handle_player_attack(map, prot_pos, antags_coords, prot_traits, message_output, invt, weapon_name):
     #antags_coords is a list of lists of form [[x,y], hp]
     #prot_pos is a [x,y]
     for i in range(len(antags_coords)):
-        if distance(prot_pos, antags_coords[i][0]) <= 1:
+        if distance(prot_pos, antags_coords[i][0]) <= 1: # here's where a fight begins
             # decrement antag hp
-            antags_coords[i][1] -= 1
+            fighting.fight(prot_traits, antags_coords, i, message_output, invt, weapon_name)
+            # examine antagonist hp
             if antags_coords[i][1] <= 0:
                 # antag dead, wipe from map
                 antag_x = antags_coords[i][0][0]
