@@ -15,9 +15,9 @@ def pick_protagonist_class ():
     [G]nome is big and strong. [U]nicorn is healthy as a horse. [F]airy is fast and courise""")
 
     heroes_to_pick = [
-        {"Gnome" : {"Strength": 30, "Agility": 10, "Vitality": 20}},
-        {"Unicorn": {"Strength": 10, "Agility": 20, "Vitality": 30}},
-        {"Fairy": {"Strength": 20, "Agility": 30, "Vitality": 10}}
+        {"Gnome" : {"Strength": 30, "Agility": 10, "Lives": 20}},
+        {"Unicorn": {"Strength": 10, "Agility": 20, "Lives": 30}},
+        {"Fairy": {"Strength": 20, "Agility": 30, "Lives": 10}}
     ]
 
     while True:

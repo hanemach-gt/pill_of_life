@@ -27,7 +27,7 @@ def extract_item_name(item_hilite_coords_list, item_type, index):
 
 
 # decrements item count associated with item_hilite_coords_list from invt
-def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
+def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index, prot_traits):
     # item_hilite_coords_list might look like this:
     # [ ['Weapon', [['Axe', 5, 3, 21], ...] ]
     #   ['Armor', [['armor1', 13, 3, 21], ...] ]
@@ -38,6 +38,12 @@ def use_item_handler(invt, item_type, item_hilite_coords_list, selected_index):
     item = extract_item_name(item_hilite_coords_list, item_type, selected_index)
     if item:
         invt[item_type][item] -= 1
+        if not item_type == "Potion":
+            if "Load capacity" in prot_traits:
+                prot_traits["Load capacity"] += 1
+            else:
+                prot_traits["Load capacity"] = 1
+
         if invt[item_type][item] == 0:
             del invt[item_type][item]
             if not invt[item_type]:
@@ -188,11 +194,11 @@ def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_co
             item_selection_msg_handler(item_hilite_coords_list, "Potion", potion_selection_index, items_collection, message_output)
 
         elif user_input == "j":
-            use_item_handler(invt, "Weapon", item_hilite_coords_list, weapon_selection_index)
+            use_item_handler(invt, "Weapon", item_hilite_coords_list, weapon_selection_index, prot_traits)
         elif user_input == "k":
-            use_item_handler(invt, "Armor", item_hilite_coords_list, armor_selection_index)
+            use_item_handler(invt, "Armor", item_hilite_coords_list, armor_selection_index, prot_traits)
         elif user_input == "l":
-            use_item_handler(invt, "Potion", item_hilite_coords_list, potion_selection_index)
+            use_item_handler(invt, "Potion", item_hilite_coords_list, potion_selection_index, prot_traits)
 
         elif user_input == "x":
             return None
@@ -216,10 +222,12 @@ def main ():
     prot_traits = { "Lives":10, "Experience":7,
                     "Attack":5, "Defense":5, "Agility":5, "Strength":10,
                     "Load capacity":10 }
-    print(prot_class, prot_traits)
-    prot_traits["Lives"] = prot_class["Lives"]
-    prot_traits["Strength"] = prot_class["Strength"]
-    prot_traits["Agility"] = prot_class["Agility"]
+
+    firstkey = list(prot_class.keys())[0]
+
+    prot_traits["Lives"] = prot_class[firstkey]["Lives"]
+    prot_traits["Strength"] = prot_class[firstkey]["Strength"]
+    prot_traits["Agility"] = prot_class[firstkey]["Agility"]
 
     prot_initial_coords = [ 105, 30 ]
     result = engage_level(invt, prot_traits, items_collection, "map_level_1.txt", prot_initial_coords)
