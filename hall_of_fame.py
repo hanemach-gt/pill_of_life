@@ -23,7 +23,7 @@ def save_file(hof, filename="hall_of_fame.txt"):
         print("Could not save Hall of Fame")
 
 
-def sort_hof(hof):
+def get_sorted_hof(hof):
     for i in range(len(hof)):
         for j in range(len(hof)-1):
             if int(hof[j+1][1]) < int(hof[j][1]):
@@ -35,7 +35,7 @@ def sort_hof(hof):
 
 def print_hof(hof):
     maxnamelen = 0
-    for record in sort_hof(hof):
+    for record in get_sorted_hof(hof):
         if len(record[1]) > maxnamelen:
             maxnamelen = len(record[1])
 

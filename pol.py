@@ -8,6 +8,7 @@ import inventory
 import msg
 import character_picking
 import hotwarm
+import hall_of_fame
 
 import opening_screen
 import how_to_play_screen
@@ -208,6 +209,15 @@ def engage_level(invt, prot_traits, items_collection, file_name, prot_initial_co
             return None
 
 
+def handle_hof(name, time):
+    hof = hall_of_fame.load_file()
+    entry = [ name, str(time) ]
+    hof.append(entry)
+    hof = hall_of_fame.get_sorted_hof(hof)
+    hall_of_fame.save_file(hof)
+    hall_of_fame.print_hof(hof)
+
+
 def main ():
     opening_screen.open_welcome_screen()
     how_to_play_screen.how_to_play_screen()
@@ -234,6 +244,7 @@ def main ():
     prot_traits["Agility"] = prot_class[firstkey]["Agility"]
 
     prot_initial_coords = [ 105, 30 ]
+    time_start = datetime.datetime.now()
     result = engage_level(invt, prot_traits, items_collection, "map_level_1.txt", prot_initial_coords)
     if result is None:
         print("Player interrupted the game.")
@@ -247,7 +258,11 @@ def main ():
                 if result == True:
                     # engage cold warm hot
                     if hotwarm.play(10):
+                        time_end = datetime.datetime.now()
                         print("Congratulations! You have won!")
+                        os.system("sleep 4")
+                        delta_t = int((time_end - time_start).total_seconds())
+                        handle_hof(prot_name, delta_t)
                     else:
                         print("We're sad that you've lost at the very end!")
                 else:
