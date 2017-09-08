@@ -1,13 +1,15 @@
  =============================================================================================================================================
 
-   	 You are an active substance of a cancer cure. Your's mission is to defeat all cancer cells and destroy finally boss,
-	which is a big bad glioma in brain. Gather experience, find item, collect potions, it will help you to achieve your's quest.
+   	 You are an active substance of a cancer cure. yours mission is to defeat all cancer cells and annihilate the tumour in brain,
+                                       the finally boss, which is a big bad Glioma .
+      Gather experience, find items, collect potions, it will help you to achieve yours quest.
 		 You are the main ingredient of the Pill of life, pill which save humans life. You can't fail. Good luck.
 
  	===========================================================================================================================
 
-        	         Using W S A D you can move all over the level, press spacebar to attack an enemy.
-                            Be aware of human body acids and other dangerous places.
+        	         Using W S A D you can move all over the level, press spacebar to begin fighting with an enemy.
+                   For moving through an inventory use: press "P" to pick potion and "L" to use it,
+                   "I" for picking weapon and "J" to throw it away  from inventory, press "O" for picking an armor and "K" to remove it.
+                    Be aware of being dissolved in human body acids (liquid with green color)
+                                  and touching organs walls because it cause death of patient
           	Remember, if you took too much items, you will be overweighted so choose wisely which item you pick
-
- 

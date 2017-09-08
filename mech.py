@@ -308,7 +308,7 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
     # examine collisions
     if would_step_at_any_deadly:
         # end of gameplay
-        print("You've touched lava! You lost!")
+        print("You've touched an oragnizim!")
         return False
     elif would_step_at_any_antag:
         pass # do nothing, antagonists cannot be stepped at

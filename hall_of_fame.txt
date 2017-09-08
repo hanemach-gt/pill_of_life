@@ -1,2 +1,2 @@
-|              player_name               |              expierience               |             defeated_enemy             |              victory_time              |
-|                   de                   |                   1                    |             5hhhhhhhhhhhh0             |            hhhhhhhhhhhhhh0             |
+|       player_name       |       expierience       |     defeated_enemy      |         points          |      victory_time       |
+|          pepik          |           10            |           550           |           560           |           10            |

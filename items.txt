@@ -10,6 +10,7 @@ Armor,wifebeater,Defense:15|Agility:-1
 Armor,Chain Armor,Defense:8|Agility:-5
 Armor,sheet,Defense:1|Agility:0
 Armor,flannel shirt,Defense:6|Agility:0
-Potion,expecto patronum,Agility:30
-Potion,kamehameha,Attack:40
-Potion,exegi monumentum,Defense:70
+Potion,expecto patronum,Lives:10
+Potion,kamehameha,Attack:7
+Potion,exegi monumentum,Defense:3
+Potion,memento mori,Lives:5
