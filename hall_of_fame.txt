@@ -1,2 +1,6 @@
-|       player_name       |       expierience       |     defeated_enemy      |         points          |      victory_time       |
-|          pepik          |           10            |           550           |           560           |           10            |
+test1,500
+test2,400
+test3,300
+test4,200
+test5,100
+test6,7
