@@ -110,9 +110,9 @@ def generate_inventory_table(inventory, item_hilite_coords_list, prot_traits, ma
     return invtable
 
 def main():
-    items = { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9},
-                "Potion": {"pot1":3, "pot2":4, "pot3":4, "pot4":4, "pot5":4},
-                "Armor": {"armor1":5, "armor2":9, "armor3":5, "armor4":9, "armor5":9 }
+    items = { "Weapon": {"Axe":1, "Knife":7},
+                "Potion": {},
+                "Armor": {}
             }
     item_hilite_coords_list = []
     invtable = generate_inventory_table(items, item_hilite_coords_list)
