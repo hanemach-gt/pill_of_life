@@ -1,28 +1,53 @@
-import csv
+def load_file(filename="hall_of_fame.txt"):
+    hof = []
+    try:
+        with open(filename) as f:
+            for line in f:
+                record = line.strip()
+                record = record.split(",")
+                hof.append(record)
 
-def write_heigh_score(protagonist_name, exp, defeated_enemy, victory_time = 0, file_name = "hall_of_fame.txt"):
-    f = open(file_name, "w")
+    except FileNotFoundError:
+        print("Cound not load Hall of Fame")
 
-        f.write(["|{:^25}|{:^25}|{:^25}|{:^25}|{:^25}|".format
-                        ("player_name", "expierience", "defeated_enemy", "points", "victory_time")
-                        ])
-with open (file_name, "w", newline="") as new_file:
-    points = int(exp)+ int(defeated_enemy)
-    points = str(points)
-    values = [protagonist_name, exp, defeated_enemy, victory_time]
-    # headers = ["player_name","expierience", "defeated_enemy","victory_time"]
-    writer = csv.writer(new_file)
-
-        writer.writerow(["|{:^25}|{:^25}|{:^25}|{:^25}|{:^25}|".format
-                        (protagonist_name, exp, defeated_enemy, points, victory_time)
-                        ])
-        print(len(protagonist_name))
+    return hof
 
 
+def save_file(hof, filename="hall_of_fame.txt"):
+    try:
+        with open(filename, "w") as f:
+            for entry in hof:
+                f.write(entry[0] + "," + entry[1] + "\n")
+
+    except IOError:
+        print("Could not save Hall of Fame")
 
 
+def sort_hof(hof):
+    for i in range(len(hof)):
+        for j in range(len(hof)-1):
+            if int(hof[j+1][1]) < int(hof[j][1]):
+                swap = hof[j+1]
+                hof[j+1] = hof[j]
+                hof[j] = swap
 
+    return hof
 
+def print_hof(hof):
+    maxnamelen = 0
+    for record in sort_hof(hof):
+        if len(record[1]) > maxnamelen:
+            maxnamelen = len(record[1])
 
+    player_str = "player name"
+    namecollen = max(len(player_str), maxnamelen)
 
-write_heigh_score("pepik", "10", "550", "10",)
+    print(player_str + " " * (len(player_str) - namecollen) + "|time")
+    for record in hof:
+        print(record[0] + " " * (namecollen - len(record[0])) + "|" + record[1])
+
+def main():
+    hof = load_file()
+    print_hof(hof)
+
+if __name__ == "__main__": main()
