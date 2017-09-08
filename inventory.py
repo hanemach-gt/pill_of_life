@@ -1,4 +1,4 @@
-# appends keys and values nicely converted to string to invtable,
+# appends keys and values from inventory[masterkey] nicely converted to string to invtable,
 # indenting with item_indent, aligning to max_width
 # appends coordinates of items in resulting inventory table for highlighting to
 # item_hilite_coords_list, using invt_ypos as frame of reference
@@ -23,7 +23,13 @@ def batch_item_append (inventory, masterkey, invtable, item_indent, max_width, i
 
     item_hilite_coords_list.append([masterkey, hilite_list])
 
-def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
+# appends nicely converted trait to inventory table, aligning to max_width
+def trait_append(prot_traits, trait, invtable, max_width):
+    key_len = len(trait)
+    val_len = len(str(prot_traits[trait]))
+    invtable.append(["  "] + list(trait) + [" "] * (max_width - (key_len + val_len + 3)) + list(str(prot_traits[trait])) + [" "])
+
+def generate_inventory_table(inventory, item_hilite_coords_list, prot_traits, max_width=25):
 
     invtable = []
     item_hilite_coords_list.clear()
@@ -79,7 +85,25 @@ def generate_inventory_table(inventory, item_hilite_coords_list, max_width=25):
         batch_item_append(inventory, "Potion", invtable, item_indent, max_width, invt_ypos, item_hilite_coords_list)
 
     invtable.append(empty_line)
+    invt_ypos[0] += 2
 
+    str_stats = " Hero statistics:"
+    invtable.append(list(str_stats) + [" "] * (max_width - len(str_stats)))
+    invtable.append(empty_line)
+    invt_ypos[0] += 2
+
+    # not added in batch to enforce arbitrary order of appending
+    trait_append(prot_traits, "Load capacity", invtable, max_width)
+    trait_append(prot_traits, "Experience", invtable, max_width)
+    trait_append(prot_traits, "Attack", invtable, max_width)
+    trait_append(prot_traits, "Defense", invtable, max_width)
+    trait_append(prot_traits, "Lives", invtable, max_width)
+    trait_append(prot_traits, "Strength", invtable, max_width)
+    trait_append(prot_traits, "Agility", invtable, max_width)
+
+    invtable.append(empty_line)
+
+    # embrace inventory table with '[' ']'
     for i in range(len(invtable)):
         invtable[i] = ["["] + invtable[i] + ["]"]
 

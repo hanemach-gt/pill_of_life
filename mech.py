@@ -1,6 +1,7 @@
 import os
 import math
 
+import msg
 
 def getch():
     import sys, tty, termios
@@ -57,7 +58,7 @@ def get_predefined_color(color):
 
 # hilite coords is a list consisting of lists like:
 # ['Axe', y, x, hilite length]
-def print_map (map, hilite_coords):
+def print_map_old(map, hilite_coords): # the unoptimized version, this function is deprecated but was left for educational purposes
     coord_dict = {}
     for i in range(len(hilite_coords)):
         # sieve out y: [x, length of hilite]
@@ -83,7 +84,51 @@ def print_map (map, hilite_coords):
         print()
 
 
-def bind_maps(left, right):
+# hilite coords is a list consisting of lists like:
+# ['Axe', y, x, hilite length]
+def print_map(map, hilite_coords):
+    coord_dict = {}
+    for i in range(len(hilite_coords)):
+        # sieve out y: [x, length of hilite]
+        coord_dict[hilite_coords[i][1]] = [hilite_coords[i][2], hilite_coords[i][3]]
+
+    y = 0
+    x = 0
+    while y < len(map):
+        x = 0
+        while x < len(map[y]):
+            #                      x_start          <= x < x_start          + length of hilite
+            if y in coord_dict and coord_dict[y][0] <= x < coord_dict[y][0] + coord_dict[y][1]:
+                # print with inverted color: inventory selected item
+                hilite_me = ""
+                for i in range(coord_dict[y][1]): # length of hilite
+                    hilite_me += map[y][x]
+                    x += 1
+                print("\033[7m" + hilite_me + "\033[0m", end="")
+            else:
+                # print normally, optionally in colors
+                color = "\033[0m" # default
+                # recognize patterns:
+                pattern = ""
+                patt_char = map[y][x]
+                while x < len(map[y]) and map[y][x] == patt_char:
+                    pattern += patt_char
+                    x += 1
+
+                if patt_char == "<":
+                    color = get_predefined_color("lightgreen")
+                elif patt_char == "#":
+                    color = get_predefined_color("red")
+                elif patt_char == "~":
+                    color = get_predefined_color("orange")
+
+                print(color + pattern if len(pattern) > 0 else patt_char + "\033[0m", end="")
+        print()
+        y += 1
+
+
+# returns a bound map of 2 maps in horizontal orientation
+def bind_maps_horz(left, right):
     left_indent = [" "] * len(left[0])
     bound = []
     if len(right) > len(left):
@@ -102,6 +147,18 @@ def bind_maps(left, right):
     return bound
 
 
+# returns a bound map of 2 maps in vertical orientation
+def bind_maps_vert(up, down):
+    bound = []
+    for row in up:
+        bound.append(row)
+
+    for row in down:
+        bound.append(row)
+
+    return bound
+
+
 '''
 Returns true if a character would collide
 with character `what` if moved at `char_coords` in map, false otherwise
@@ -111,17 +168,104 @@ def check_collision (map, char_coords, what):
     x_test = char_coords[0]
     y_test = char_coords[1]
     # bounds checking
-    if not 0 <= x_test < len(map[0]) or \
-        not 0 <= y_test < len(map):
+    if 0 <= y_test < len(map) and \
+        0 <= x_test < len(map[y_test]):
+        # check if there would be `what` at char_coords
+            if map[y_test][x_test] == what:
+                return True
+            else:
+                return False
+    else:
         raise ValueError("at least one board list index out of bounds")
 
-    if map[y_test][x_test] == what:
+
+# returns an item tuple from items_collection; it *has* to exist since protagonist
+# has stepped at it
+def get_item_from_collection(prot_pos, items_coords, items_collection):
+# prot_pos_new is a [x,y]
+# items_coords = [ [[item1_x, item1_y], index1], ... ]
+# items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
+#                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
+    item = ()
+    # locate our item in items_collection with help of an associated
+    # coordinate-index pair in item_coords
+    for possible_item in items_coords:
+        if possible_item[0][0] == prot_pos[0] and \
+            possible_item[0][1] == prot_pos[1]:
+            # we've found item match: grab its index
+            index = possible_item[1]
+            # access the particular item
+            item = items_collection[index]
+
+    if not item: # we have stepped at an item, so it *must* exist
+        raise ValueError("something effed up tremendously...")
+
+    return item
+
+
+# returns True if protagonist is able (=> prot_traits allow) to lift an item at which
+# it has stepped, False otherwise
+def able_to_lift_item(prot_pos, prot_traits, items_coords, items_collection):
+# prot_pos_new is a [x,y], prot_traits is a dict with string:int pairs
+# items_coords = [ [[item1_x, item1_y], index1], ... ]
+# items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
+#                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
+
+    item = get_item_from_collection(prot_pos, items_coords, items_collection)
+
+    #weapons and armor have weight 1 each, potions are weightless
+    if item[0] == "Potion":
+        return True
+    elif item[0] == "Weapon" or item[0] == "Armor":
+        if prot_traits["Load capacity"] < 1: #cannot take it?
+            return False
         return True
 
-    return False
+    raise ValueError("unknown item type %s" % (item[0]))
 
 
-def handle_protagonist_move(map, direction, protagonist, prot_pos, antagonist, old_char):
+def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
+# invt is a { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
+# prot_traits is a dict with string:int pairs
+# item is a (type1, item1, {trait1 : delta1, ... traitn : deltan})
+
+    # update protagonist traits
+    trait_dict = item[2]
+    for trait in trait_dict:
+        if trait in prot_traits:
+            prot_traits[trait] += trait_dict[trait]
+        else:
+            prot_traits[trait] = trait_dict[trait] # add trait if it wasn't present
+
+    # update inventory
+    item_type = item[0]
+    item_name = item[1]
+    # create item category/ type if absent
+    if item_type not in invt:
+        invt[item_type] = {}
+
+    if item_name in invt[item_type]:
+        # adjust item amount
+        invt[item_type][item_name] += 1
+    else:
+        # add the item
+        invt[item_type][item_name] = 1
+
+    if not item_type == "Potion": # potions are weightless and are always collectible
+        prot_traits["Load capacity"] -= 1
+
+    traits_string = ""
+    for trait in trait_dict:
+        plus = ""
+        if prot_traits[trait] > 0:
+            plus = "+"
+        traits_string += trait + " " + plus + str(prot_traits[trait]) + ",  "
+    traits_string = traits_string.rstrip(",  ")
+
+    result_msg = "Grabbed %s (%s), modified %s" % (item_name, item_type, traits_string)
+    msg.set_output_message(message_output, result_msg)
+
+def handle_protagonist_move(map, direction, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
     dx = 0
     dy = 0
     if direction == "w":
@@ -141,15 +285,35 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, antagonist, o
     y_new = prot_pos[1] + dy
     prot_pos_new = [x_new, y_new]
 
-    would_step_at_wall = check_collision(map, prot_pos_new, "#")
-    would_step_at_antag = check_collision(map, prot_pos_new, antagonist)
+    #check collisions
+    # any antagonist?
+    would_step_at_any_antag = False
+    for antag in antagonists:
+        if check_collision(map, prot_pos_new, antag):
+            would_step_at_any_antag = True
+            break
 
-    if would_step_at_wall:
+    # any item?
+    would_step_at_item = check_collision(map, prot_pos_new, "i")
+
+    # any deadly wall?
+    cannot_step_at = "<#~|"
+    would_step_at_any_deadly = False
+    for disallowed in cannot_step_at:
+        if check_collision(map, prot_pos_new, disallowed):
+            # about to step at one of disallowed characters?
+            would_step_at_any_deadly = True
+            break
+
+    # examine collisions
+    if would_step_at_any_deadly:
         # end of gameplay
         print("You've touched lava! You lost!")
         return False
-    elif would_step_at_antag:
-        pass # do nothing, don't step at the antagonist
+    elif would_step_at_any_antag:
+        pass # do nothing, antagonists cannot be stepped at
+    elif would_step_at_item and not able_to_lift_item(prot_pos_new, prot_traits, items_coords, items_collection):
+        msg.set_output_message(message_output, "You don\'t have enough load capacity to lift this item.\n\nYou need to drop something to increase load capacity.")
     else:  # perform the move
         # restore previous character to old position
         map[prot_pos[1]][prot_pos[0]] = old_char[0]
@@ -160,6 +324,14 @@ def handle_protagonist_move(map, direction, protagonist, prot_pos, antagonist, o
         # update char_pos to the outside world
         prot_pos[0] = x_new
         prot_pos[1] = y_new
+        # have we stepped at an item (we are not overloaded)?
+        if old_char[0] == "i":
+            # protagonist has stepped at an item: its coordinates reflect one of those in items_coords
+            # items_coords = [ [[item1_x, item1_y], index1], ... ]
+            item = get_item_from_collection(prot_pos, items_coords, items_collection)
+            # apply item to inventory and protagonist traits
+            adjust_inventory_prot_traits(invt, prot_traits, item, message_output)
+            old_char[0] = " " # will wipe item after we have moved somewhere else
 
     return True
 
@@ -169,21 +341,21 @@ def distance(pos1, pos2):
     dy = pos2[1] - pos1[1]
     return int(math.floor(math.sqrt(dx*dx+dy*dy)))
 
-def handle_player_attack(map, prot_pos, antags):
-    #antags is a list of lists of form [[x,y], hp]
+def handle_player_attack(map, prot_pos, antags_coords):
+    #antags_coords is a list of lists of form [[x,y], hp]
     #prot_pos is a [x,y]
-    for i in range(len(antags)):
-        if distance(prot_pos, antags[i][0]) <= 1:
+    for i in range(len(antags_coords)):
+        if distance(prot_pos, antags_coords[i][0]) <= 1:
             # decrement antag hp
-            antags[i][1] -= 1
-            if antags[i][1] <= 0:
+            antags_coords[i][1] -= 1
+            if antags_coords[i][1] <= 0:
                 # antag dead, wipe from map
-                antag_x = antags[i][0][0]
-                antag_y = antags[i][0][1]
+                antag_x = antags_coords[i][0][0]
+                antag_y = antags_coords[i][0][1]
                 map[antag_y][antag_x] = " "
                 # mark as dead for deletion
-                antags[i] = []
+                antags_coords[i] = []
 
-    # traverse antags list and delete dead ones
-    while [] in antags:
-        del antags[antags.index([])] # the while condition guarantees that there is at least one []
+    # traverse antags_coords list and delete dead ones
+    while [] in antags_coords:
+        del antags_coords[antags_coords.index([])] # the while condition guarantees that there is at least one []
