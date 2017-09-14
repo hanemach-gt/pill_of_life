@@ -4,8 +4,11 @@ import math
 import fighting
 import msg
 
+
 def getch():
-    import sys, tty, termios
+    import sys
+    import tty
+    import termios
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -19,7 +22,9 @@ def getch():
 '''
 Loads a map from a file filename.
 '''
-def load_map (filename="map.txt"):
+
+
+def load_map(filename="map.txt"):
     map = []
     try:
         with open(filename) as file:
@@ -34,24 +39,25 @@ def load_map (filename="map.txt"):
 
     return map
 
+
 def get_predefined_color(color):
     colors = {
-        "black"     :"\033[30m",
-        "red"       :"\033[31m",
-        "green"     :"\033[32m",
-        "orange"    :"\033[33m",
-        "blue"      :"\033[34m",
-        "purple"    :"\033[35m",
-        "cyan"      :"\033[36m",
-        "lightgrey" :"\033[37m",
-        "darkgrey"  :"\033[90m",
-        "lightred"  :"\033[91m",
-        "lightgreen":"\033[92m",
-        "yellow"    :"\033[93m",
-        "lightblue" :"\033[94m",
-        "pink":     "\033[95m",
-        "lightcyan" :"\033[96m"
-        }
+        "black": "\033[30m",
+        "red": "\033[31m",
+        "green": "\033[32m",
+        "orange": "\033[33m",
+        "blue": "\033[34m",
+        "purple": "\033[35m",
+        "cyan": "\033[36m",
+        "lightgrey": "\033[37m",
+        "darkgrey": "\033[90m",
+        "lightred": "\033[91m",
+        "lightgreen": "\033[92m",
+        "yellow": "\033[93m",
+        "lightblue": "\033[94m",
+        "pink": "\033[95m",
+        "lightcyan": "\033[96m"
+    }
     if color not in colors:
         raise KeyError("invalid color specifier")
 
@@ -59,7 +65,9 @@ def get_predefined_color(color):
 
 # hilite coords is a list consisting of lists like:
 # ['Axe', y, x, hilite length]
-def print_map_old(map, hilite_coords): # the unoptimized version, this function is deprecated but was left for educational purposes
+
+
+def print_map_old(map, hilite_coords):  # the unoptimized version, this function is deprecated but was left for educational purposes
     coord_dict = {}
     for i in range(len(hilite_coords)):
         # sieve out y: [x, length of hilite]
@@ -73,7 +81,7 @@ def print_map_old(map, hilite_coords): # the unoptimized version, this function 
                 print("\033[7m" + map[y][x] + "\033[0m", end="")
             else:
                 # print normally, optionally in colors
-                color = "\033[0m" # default
+                color = "\033[0m"  # default
                 if map[y][x] == "<":
                     color = get_predefined_color("lightgreen")
                 elif map[y][x] == "#":
@@ -102,13 +110,13 @@ def print_map(map, hilite_coords):
             if y in coord_dict and coord_dict[y][0] <= x < coord_dict[y][0] + coord_dict[y][1]:
                 # print with inverted color: inventory selected item
                 hilite_me = ""
-                for i in range(coord_dict[y][1]): # length of hilite
+                for i in range(coord_dict[y][1]):  # length of hilite
                     hilite_me += map[y][x]
                     x += 1
                 print("\033[7m" + hilite_me + "\033[0m", end="")
             else:
                 # print normally, optionally in colors
-                color = "\033[0m" # default
+                color = "\033[0m"  # default
                 # recognize patterns:
                 pattern = ""
                 patt_char = map[y][x]
@@ -164,18 +172,20 @@ def bind_maps_vert(up, down):
 Returns true if a character would collide
 with character `what` if moved at `char_coords` in map, false otherwise
 '''
-def check_collision (map, char_coords, what):
+
+
+def check_collision(map, char_coords, what):
     # coordinates to be tested against
     x_test = char_coords[0]
     y_test = char_coords[1]
     # bounds checking
     if 0 <= y_test < len(map) and \
-        0 <= x_test < len(map[y_test]):
+            0 <= x_test < len(map[y_test]):
         # check if there would be `what` at char_coords
-            if map[y_test][x_test] == what:
-                return True
-            else:
-                return False
+        if map[y_test][x_test] == what:
+            return True
+        else:
+            return False
     else:
         raise ValueError("at least one board list index out of bounds")
 
@@ -183,22 +193,22 @@ def check_collision (map, char_coords, what):
 # returns an item tuple from items_collection; it *has* to exist since protagonist
 # has stepped at it
 def get_item_from_collection(prot_pos, items_coords, items_collection):
-# prot_pos_new is a [x,y]
-# items_coords = [ [[item1_x, item1_y], index1], ... ]
-# items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
-#                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
+    # prot_pos_new is a [x,y]
+    # items_coords = [ [[item1_x, item1_y], index1], ... ]
+    # items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
+    #                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
     item = ()
     # locate our item in items_collection with help of an associated
     # coordinate-index pair in item_coords
     for possible_item in items_coords:
         if possible_item[0][0] == prot_pos[0] and \
-            possible_item[0][1] == prot_pos[1]:
+                possible_item[0][1] == prot_pos[1]:
             # we've found item match: grab its index
             index = possible_item[1]
             # access the particular item
             item = items_collection[index]
 
-    if not item: # we have stepped at an item, so it *must* exist
+    if not item:  # we have stepped at an item, so it *must* exist
         raise ValueError("something effed up tremendously...")
 
     return item
@@ -207,18 +217,18 @@ def get_item_from_collection(prot_pos, items_coords, items_collection):
 # returns True if protagonist is able (=> prot_traits allow) to lift an item at which
 # it has stepped, False otherwise
 def able_to_lift_item(prot_pos, prot_traits, items_coords, items_collection):
-# prot_pos_new is a [x,y], prot_traits is a dict with string:int pairs
-# items_coords = [ [[item1_x, item1_y], index1], ... ]
-# items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
-#                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
+    # prot_pos_new is a [x,y], prot_traits is a dict with string:int pairs
+    # items_coords = [ [[item1_x, item1_y], index1], ... ]
+    # items_collection = ((type1, item1, {trait1 : delta1, ... traitn : deltan}),
+    #                     (type2, item2, {trait2 : delta2, ... traitn : deltan}))
 
     item = get_item_from_collection(prot_pos, items_coords, items_collection)
 
-    #weapons and armor have weight 1 each, potions are weightless
+    # weapons and armor have weight 1 each, potions are weightless
     if item[0] == "Potion":
         return True
     elif item[0] == "Weapon" or item[0] == "Armor":
-        if prot_traits["Load capacity"] < 1: #cannot take it?
+        if prot_traits["Load capacity"] < 1:  # cannot take it?
             return False
         return True
 
@@ -226,9 +236,9 @@ def able_to_lift_item(prot_pos, prot_traits, items_coords, items_collection):
 
 
 def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
-# invt is a { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
-# prot_traits is a dict with string:int pairs
-# item is a (type1, item1, {trait1 : delta1, ... traitn : deltan})
+    # invt is a { "Weapon": {"Axe":1, "Knife":7, "w1":9, "w2":9, "w3":9}, ... }
+    # prot_traits is a dict with string:int pairs
+    # item is a (type1, item1, {trait1 : delta1, ... traitn : deltan})
 
     # update protagonist traits
     trait_dict = item[2]
@@ -236,7 +246,7 @@ def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
         if trait in prot_traits:
             prot_traits[trait] += trait_dict[trait]
         else:
-            prot_traits[trait] = trait_dict[trait] # add trait if it wasn't present
+            prot_traits[trait] = trait_dict[trait]  # add trait if it wasn't present
 
     # update inventory
     item_type = item[0]
@@ -252,7 +262,7 @@ def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
         # add the item
         invt[item_type][item_name] = 1
 
-    if not item_type == "Potion": # potions are weightless and are always collectible
+    if not item_type == "Potion":  # potions are weightless and are always collectible
         prot_traits["Load capacity"] -= 1
 
     traits_string = ""
@@ -267,7 +277,18 @@ def adjust_inventory_prot_traits(invt, prot_traits, item, message_output):
     msg.set_output_message(message_output, result_msg)
 
 
-def handle_protagonist_move(map, direction, message_output, protagonist, prot_pos, prot_traits, antagonists, old_char, items_coords, items_collection, invt):
+def handle_protagonist_move(
+        map,
+        direction,
+        message_output,
+        protagonist,
+        prot_pos,
+        prot_traits,
+        antagonists,
+        old_char,
+        items_coords,
+        items_collection,
+        invt):
     dx = 0
     dy = 0
     if direction == "w":
@@ -287,7 +308,7 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
     y_new = prot_pos[1] + dy
     prot_pos_new = [x_new, y_new]
 
-    #check collisions
+    # check collisions
     # any antagonist?
     would_step_at_any_antag = False
     for antag in antagonists:
@@ -313,9 +334,11 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
         print("You've touched an oragnizim!")
         return False
     elif would_step_at_any_antag:
-        pass # do nothing, antagonists cannot be stepped at
+        pass  # do nothing, antagonists cannot be stepped at
     elif would_step_at_item and not able_to_lift_item(prot_pos_new, prot_traits, items_coords, items_collection):
-        msg.set_output_message(message_output, "You don\'t have enough load capacity to lift this item.\n\nYou need to drop something to increase load capacity.")
+        msg.set_output_message(
+            message_output,
+            "You don\'t have enough load capacity to lift this item.\n\nYou need to drop something to increase load capacity.")
     else:  # perform the move
         # restore previous character to old position
         map[prot_pos[1]][prot_pos[0]] = old_char[0]
@@ -333,7 +356,7 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
             item = get_item_from_collection(prot_pos, items_coords, items_collection)
             # apply item to inventory and protagonist traits
             adjust_inventory_prot_traits(invt, prot_traits, item, message_output)
-            old_char[0] = " " # will wipe item after we have moved somewhere else
+            old_char[0] = " "  # will wipe item after we have moved somewhere else
 
     return True
 
@@ -341,13 +364,14 @@ def handle_protagonist_move(map, direction, message_output, protagonist, prot_po
 def distance(pos1, pos2):
     dx = pos2[0] - pos1[0]
     dy = pos2[1] - pos1[1]
-    return int(math.floor(math.sqrt(dx*dx+dy*dy)))
+    return int(math.floor(math.sqrt(dx * dx + dy * dy)))
+
 
 def handle_player_attack(map, prot_pos, antags_coords, prot_traits, message_output, invt, weapon_name):
-    #antags_coords is a list of lists of form [[x,y], hp]
-    #prot_pos is a [x,y]
+    # antags_coords is a list of lists of form [[x,y], hp]
+    # prot_pos is a [x,y]
     for i in range(len(antags_coords)):
-        if distance(prot_pos, antags_coords[i][0]) <= 1: # here's where a fight begins
+        if distance(prot_pos, antags_coords[i][0]) <= 1:  # here's where a fight begins
             # decrement antag hp
             fighting.fight(prot_traits, antags_coords, i, message_output, invt, weapon_name)
             # examine antagonist hp
@@ -361,4 +385,4 @@ def handle_player_attack(map, prot_pos, antags_coords, prot_traits, message_outp
 
     # traverse antags_coords list and delete dead ones
     while [] in antags_coords:
-        del antags_coords[antags_coords.index([])] # the while condition guarantees that there is at least one []
+        del antags_coords[antags_coords.index([])]  # the while condition guarantees that there is at least one []

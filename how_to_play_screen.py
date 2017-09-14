@@ -1,6 +1,7 @@
 import os
 
-def how_to_play_screen(file_name =  "how_to_play_screen.txt"):
+
+def how_to_play_screen(file_name="how_to_play_screen.txt"):
     os.system("clear")
     with open(file_name) as f:
 

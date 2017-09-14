@@ -8,5 +8,5 @@ def append_output_message(message_output, string_to_be_appended):
 # output_message is a list of lists made of strings to conform to map design
 def set_output_message(message_output, string_to_be_printed):
     message_output.clear()
-    append_output_message(message_output, "") # empty line
+    append_output_message(message_output, "")  # empty line
     append_output_message(message_output, string_to_be_printed)
